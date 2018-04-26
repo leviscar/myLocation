@@ -52,7 +52,6 @@ def begin(irq):
 
     GPIO.add_event_detect(irq, GPIO.RISING, callback=handleInterrupt)
 
-
 def setup(ss):
     """
     This function defines the GPIO used for the chip select by configuring it as an output and by setting its initial state at inactive (HIGH).
@@ -91,7 +90,7 @@ def handleInterrupt(channel):
     """
     # print("\nInterrupt!")
     readBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
-    # print(_sysstatus)
+    print(_sysstatus)
     msgReceived = getBit(_sysstatus, 5, C.RXFCG_BIT)
     receiveTimeStampAvailable = getBit(_sysstatus, 5, C.LDEDONE_BIT)
     transmitDone = getBit(_sysstatus, 5, C.TXFRS_BIT)
