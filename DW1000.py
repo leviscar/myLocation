@@ -90,10 +90,11 @@ def handleInterrupt(channel):
     """
     # print("\nInterrupt!")
     readBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
-    print(_sysstatus)
+    # print(_sysstatus)
     msgReceived = getBit(_sysstatus, 5, C.RXFCG_BIT)
     receiveTimeStampAvailable = getBit(_sysstatus, 5, C.LDEDONE_BIT)
     transmitDone = getBit(_sysstatus, 5, C.TXFRS_BIT)
+    # print(transmitDone)
     if transmitDone:
         callbacks["handleSent"]()
         clearTransmitStatus()
@@ -785,11 +786,16 @@ def idle():
     This function puts the chip into idle mode.
     """
     global _deviceMode
+    testctr = [1] * 4
     setArray(_sysctrl, 4, 0x00)
     setBit(_sysctrl, 4, C.TRXOFF_BIT, True)
     _deviceMode = C.IDLE_MODE
     writeBytes(C.SYS_CTRL, C.NO_SUB, _sysctrl, 4)
-
+    readBytes(C.SYS_CTRL, C.NO_SUB, testctr, 4)
+    print("sys")
+    print (_sysctrl)
+    print("lst")
+    print (testctr)
 
 """
 Message reception functions.
