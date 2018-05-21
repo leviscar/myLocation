@@ -1,6 +1,7 @@
 """
 This python module contains low-level functions to interact with the DW1000 chip using a Raspberry Pi 3. It requires the following modules: 
-math, time, spidev, Rpi.GPIO, random.
+math, time, 
+dev, Rpi.GPIO, random.
 """
 
 import time
@@ -33,7 +34,7 @@ DW1000 general configuration.
 """
 
 
-def begin(irq):
+def  begin(irq):
     """
     This function opens the SPI connection available on the Raspberry Pi using the chip select #0. Normally, spidev can auto enable chip select when necessary. However, in our case, the dw1000's chip select is connected to GPIO16 so we have to enable/disable it manually.
     It also sets up the interrupt detection event on the rising edge of the interrupt pin.
@@ -47,6 +48,7 @@ def begin(irq):
     GPIO.setmode(GPIO.BCM)
     spi.open(0, 0)
     spi.max_speed_hz = 4000000
+    spi.mode = 0b00
     _deviceMode = C.IDLE_MODE
     GPIO.setup(irq, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -88,13 +90,13 @@ def handleInterrupt(channel):
     """
     Callback invoked on the rising edge of the interrupt pin. Handle the configured interruptions.
     """
-    # print("\nInterrupt!")
+    print("\nInterrupt!")
     readBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
-    # print(_sysstatus)
+    print(_sysstatus)
     msgReceived = getBit(_sysstatus, 5, C.RXFCG_BIT)
     receiveTimeStampAvailable = getBit(_sysstatus, 5, C.LDEDONE_BIT)
     transmitDone = getBit(_sysstatus, 5, C.TXFRS_BIT)
-    # print(transmitDone)
+    print(transmitDone)
     if transmitDone:
         callbacks["handleSent"]()
         clearTransmitStatus()
@@ -296,7 +298,6 @@ def newConfiguration():
     readBytes(C.TX_FCTRL, C.NO_SUB, _txfctrl, 5)
     readBytes(C.SYS_MASK, C.NO_SUB, _sysmask, 4)
 
-
 def commitConfiguration():
     """
     This function commits the configuration stored in the arrays previously filled. It writes into the corresponding registers to apply the changes to the DW1000 chip.
@@ -484,6 +485,7 @@ def generalConfiguration(address, mode):
     currentShortAddress[1] = randint(0, 256)
     deviceAddress = currentShortAddress[0] * 256 + currentShortAddress[1]
 
+    # writeBytes(C.PANADR, C.NO_SUB, [254, 254, 245, 225, 220], 4)
     # configure mode, network
     newConfiguration()
     setDefaultConfiguration()
@@ -494,6 +496,14 @@ def generalConfiguration(address, mode):
     enableMode(mode)
     setAntennaDelay(C.ANTENNA_DELAY)
     commitConfiguration()
+
+    # readBytes(C.PANADR, C.NO_SUB, _networkAndAddress, 4)
+    # readBytes(C.SYS_CFG, C.NO_SUB, _syscfg, 4)
+    # readBytes(C.CHAN_CTRL, C.NO_SUB, _chanctrl, 4)
+    # readBytes(C.TX_FCTRL, C.NO_SUB, _txfctrl, 5)
+    # readBytes(C.SYS_MASK, C.NO_SUB, _sysmask, 4)
+    #
+    # readBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
 
     data = [0] * 4
     data2 = [0] * 8
@@ -786,16 +796,10 @@ def idle():
     This function puts the chip into idle mode.
     """
     global _deviceMode
-    testctr = [1] * 4
     setArray(_sysctrl, 4, 0x00)
     setBit(_sysctrl, 4, C.TRXOFF_BIT, True)
     _deviceMode = C.IDLE_MODE
     writeBytes(C.SYS_CTRL, C.NO_SUB, _sysctrl, 4)
-    readBytes(C.SYS_CTRL, C.NO_SUB, testctr, 4)
-    print("sys")
-    print (_sysctrl)
-    print("lst")
-    print (testctr)
 
 """
 Message reception functions.
@@ -877,7 +881,7 @@ def clearReceiveStatus():
     setBit(_sysstatus, 5, C.RXRFSL_BIT, True)
 
     writeBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
-
+    setBit(_sysstatus, 5, C.RXRFSL_BIT, True)
 
 def getFirstPathPower():
     """
@@ -1140,7 +1144,6 @@ def clearAllStatus():
     """
     setArray(_sysstatus, 5, 0xFF)
     writeBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
-
 
 def getTransmitTimestamp():
     """
@@ -1501,3 +1504,15 @@ def close():
     spi.close()
     GPIO.cleanup()
     print "\n Close SPI"
+
+
+"""
+Hardware functions
+"""
+# le
+def setLeds(mode):
+    reg = [0]*4
+    if(mode & C.LEDS_ENABLE):
+        readBytes(C.GPIO_CTRL, 0, reg, 4)
+        if(mode & C.LEDS_INIT_BLINK):
+            return 0

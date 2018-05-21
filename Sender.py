@@ -46,7 +46,7 @@ try:
     while 1:
         if sent:
             transmitter()
-            sent=False
+            sent = False
 
 except KeyboardInterrupt:
     DW1000.close()
