@@ -161,13 +161,10 @@ try:
     DW1000.setAntennaDelay(C.ANTENNA_DELAY_RASPI)
 
     receiver()
-    # transmitPoll()
+    transmitPoll()
+    noteActivity()
     while 1:
-        transmitPoll()
-        print(lastPoll)
-    # noteActivity()
-    # while 1:
-    #     loop()
+        loop()
 
 except KeyboardInterrupt:
     DW1000.close()

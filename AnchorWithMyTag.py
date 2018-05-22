@@ -24,14 +24,14 @@ timeRangeReceivedTS = 0
 timePollSentTS = 0
 timeRangeSentTS = 0
 timeComputedRangeTS = 0
-REPLY_DELAY_TIME_US = 7000 
+REPLY_DELAY_TIME_US = 7000
 
 
 def millis():
     """
     This function returns the value (in milliseconds) of a clock which never goes backwards. It detects the inactivity of the chip and
     is used to avoid having the chip stuck in an undesirable state.
-    """    
+    """
     return int(round(monotonic.monotonic() * C.MILLISECONDS))
 
 
@@ -39,7 +39,7 @@ def handleSent():
     """
     This is a callback called from the module's interrupt handler when a transmission was successful. 
     It sets the sentAck variable as True so the loop can continue.
-    """            
+    """
     global sentAck
     sentAck = True
 
@@ -48,7 +48,7 @@ def handleReceived():
     """
     This is a callback called from the module's interrupt handler when a reception was successful. 
     It sets the received receivedAck as True so the loop can continue.
-    """       
+    """
     global receivedAck
     receivedAck = True
 
@@ -56,7 +56,7 @@ def handleReceived():
 def noteActivity():
     """
     This function records the time of the last activity so we can know if the device is inactive or not.
-    """        
+    """
     global lastActivity
     lastActivity = millis()
 
@@ -64,9 +64,9 @@ def noteActivity():
 def resetInactive():
     """
     This function restarts the default polling operation when the device is deemed inactive.
-    """    
+    """
     global expectedMsgId
-    print("reset inactive")    
+    print("reset inactive")
     expectedMsgId = C.POLL
     receiver()
     noteActivity()
@@ -75,7 +75,7 @@ def resetInactive():
 def transmitPollAck():
     """
     This function sends the polling acknowledge message which is used to confirm the reception of the polling message. 
-    """        
+    """
     global data
     DW1000.newTransmit()
     data[0] = C.POLL_ACK
@@ -98,7 +98,7 @@ def transmitRangeAcknowledge():
 def transmitRangeFailed():
     """
     This functions sends the range failed message which tells the tag that the ranging function has failed and to start another ranging transmission.
-    """    
+    """
     global data
     DW1000.newTransmit()
     data[0] = C.RANGE_FAILED
@@ -109,7 +109,7 @@ def transmitRangeFailed():
 def receiver():
     """
     This function configures the chip to prepare for a message reception.
-    """    
+    """
     global data
     DW1000.newReceive()
     DW1000.receivePermanently()
@@ -173,7 +173,7 @@ def loop():
 
 
 
-try:    
+try:
     PIN_IRQ = 19
     PIN_SS = 16
     DW1000.begin(PIN_IRQ)

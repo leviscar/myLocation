@@ -4,7 +4,6 @@ It receives the message and then prints it in the console.
 It requires the following modules: DW1000, DW1000Constants
 """
 
-
 import DW1000
 import DW1000Constants as C
 
@@ -12,11 +11,12 @@ received = False
 # [dataRate, pulseFrequency, preambleLength]
 MODE_TEST = [C.TRX_RATE_6800KBPS, C.TX_PULSE_FREQ_16MHZ, C.TX_PREAMBLE_LEN_128]
 
+
 def handleReceived():
     """
     This is a callback called from the module's interrupt handler when a reception was successful. 
     It sets the received variable as True so the loop can continue.
-    """    
+    """
     global received
     received = True
 
@@ -24,7 +24,7 @@ def handleReceived():
 def receiver():
     """
     This function configures the chip to prepare for a message reception.
-    """    
+    """
     DW1000.newReceive()
     DW1000.receivePermanently()
     DW1000.startReceive()
@@ -46,12 +46,13 @@ try:
             fpPwr = DW1000.getFirstPathPower()
             rxPwr = DW1000.getReceivePower()
             rcvQuality = DW1000.getReceiveQuality()
-            msg = DW1000.getDataStr()
-            print(msg)
+            data = DW1000.getHexData(12)
+            # msg = DW1000.getDataStr()
+            print(data)
             print("FP power: %f dBm" % (fpPwr))
             print("RX power: %f dBm" % (rxPwr))
             print("Signal quality: %f \n" % (rcvQuality))
             received = False
-            
+
 except KeyboardInterrupt:
     DW1000.close()

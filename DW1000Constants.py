@@ -22,6 +22,7 @@ TX_MODE = 0x02
 # DW1000 Modes of operation
 MODE_LONGDATA_RANGE_LOWPOWER = [0x00, 0x01, 0x0A]
 MODE_LONGDATA_RANGE_ACCURACY = [0x00, 0x02, 0x0A]
+MODE_TEST = [0x00, 0x01, 0x05]
 
 # Clocks
 AUTO_CLOCK = 0x00
@@ -119,8 +120,15 @@ PMSC = 0x36
 
 # Registers offset
 NO_SUB = 0xFF
-PMSC_CTRL0_SUB = 0x00
+
 SFD_LENGTH_SUB = 0x00
+# PMSC subregisters
+PMSC_CTRL0_SUB = 0x00
+PMSC_CTRL1_SUB = 0x04
+PMSC_RES1_SUB = 0x08
+PMSC_SNOZT_SUB = 0X0C
+PMSC_LEDC_SUB = 0X28
+
 # OTP_IF subregisters
 OTP_ADDR_SUB = 0x04
 OTP_CTRL_SUB = 0x06
@@ -215,6 +223,17 @@ ENABLE_CLOCK_MASK1 = 0xFE
 ENABLE_CLOCK_MASK2 = 0xFC
 
 # PMSC operation data bytes
+PMSC_CTRL0_GPDCE = 0x00040000    # GPIO De-bounce Clock Enable
+PMSC_CTRL0_KHZCLEN = 0x00800000  # Kilohertz Clock Enable
+PMSC_LEDC_MASK = 0x000001FF    # /* 32-bit LED control register. */
+PMSC_LEDC_BLINK_TIM_MASK = 0x000000FF   # how long the LEDs remain lit after an event that causes them to be set on
+PMSC_LEDC_BLNKEN = 0x00000100    # Blink Enable. When this bit is set to 1 the LED blink feature is enabled.
+# Default blink time. Blink time is expressed in multiples of 14 ms. The value defined here is ~225 ms.
+PMSC_LEDC_BLINK_TIME_DEF = 0x10
+# Command a blink of all LEDs
+PMSC_LEDC_BLINK_NOW_ALL = 0x000F0000
+
+
 # SOFTRESET operations, see SOFTRESET section in 7.2.50.1 of the user manual
 SOFT_RESET_SYSCLKS = 0x01
 SOFT_RESET_CLEAR = 0x00
@@ -255,6 +274,26 @@ GET_DATA_MASK = 0x03FF
 # set data masks
 SET_DATA_MASK1 = 0xE0
 SET_DATA_MASK2 = 0x03
+
+# offset from GPIO_CTRL in bytes
+# add by le
+GPIO_MODE_OFFSET = 0x00
+GPIO_MODE_MASK = 0x00FFFFC0
+GPIO_MSGP0_MASK = 0x000000C0
+GPIO_MSGP1_MASK = 0x00000300
+GPIO_MSGP2_MASK = 0x00000C00
+GPIO_MSGP3_MASK = 0x00003000    # /* Mode Selection for GPIO3/TXLED */
+GPIO_MSGP4_MASK = 0x0000C000    # /* Mode Selection for GPIO4/EXTPA */
+GPIO_MSGP5_MASK = 0x00030000    # /* Mode Selection for GPIO5/EXTTXE */
+GPIO_MSGP6_MASK = 0x000C0000    # /* Mode Selection for GPIO6/EXTRXE */
+GPIO_MSGP7_MASK = 0x00300000    # /* Mode Selection for SYNC/GPIO7 */
+GPIO_MSGP8_MASK = 0x00C00000    # /* Mode Selection for IRQ/GPIO8 */
+
+GPIO_PIN2_RXLED = 0x00000400    # /* The pin operates as the RXLED output */
+GPIO_PIN3_TXLED = 0x00001000    # /* The pin operates as the TXLED output */
+GPIO_PIN4_EXTPA = 0x00004000    # /* The pin operates as the EXTPA output */
+GPIO_PIN5_EXTTXE = 0x00010000    # /* The pin operates as the EXTTXE output */
+GPIO_PIN6_EXTRXE = 0x00040000    # /* The pin operates as the EXTRXE output */
 
 # Tune operations
 # AGC_TUNE1, see 7.2.36.3 of the user manual
@@ -392,7 +431,7 @@ RANGE_REPORT = 3
 BLINK = 4
 RANGE_FAILED = 255
 
-RESET_PERIOD = 250
+RESET_PERIOD = 1000  # default 250 by le
 
 # Bits/Bytes operation
 MASK_LS_BYTE = 0xFF

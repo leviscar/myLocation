@@ -90,13 +90,13 @@ def handleInterrupt(channel):
     """
     Callback invoked on the rising edge of the interrupt pin. Handle the configured interruptions.
     """
-    print("\nInterrupt!")
+    # print("\nInterrupt!")
     readBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
-    print(_sysstatus)
+    # print(_sysstatus)
     msgReceived = getBit(_sysstatus, 5, C.RXFCG_BIT)
     receiveTimeStampAvailable = getBit(_sysstatus, 5, C.LDEDONE_BIT)
     transmitDone = getBit(_sysstatus, 5, C.TXFRS_BIT)
-    print(transmitDone)
+    print(msgReceived)
     if transmitDone:
         callbacks["handleSent"]()
         clearTransmitStatus()
@@ -104,11 +104,13 @@ def handleInterrupt(channel):
         setBit(_sysstatus, 5, C.LDEDONE_BIT, True)
         writeBytes(C.SYS_STATUS, C.NO_SUB, _sysstatus, 5)
     if isReceiveFailed():
+        print('failed')
         clearReceiveStatus()
         if _permanentReceive:
             newReceive()
             startReceive()
     elif isReceiveTimeout():
+        print('to')
         clearReceiveStatus()
         if _permanentReceive:
             newReceive()
@@ -278,11 +280,12 @@ def enableMode(mode):
     _operationMode[C.PREAMBLE_LENGTH_BIT] = prealen
 
     # setChannel
-    setChannel(C.CHANNEL_5)
+    setChannel(C.CHANNEL_1)
 
     # setPreambleCode
     if mode[1] == C.TX_PULSE_FREQ_16MHZ:
-        setPreambleCode(C.PREAMBLE_CODE_16MHZ_4)
+        # setPreambleCode(C.PREAMBLE_CODE_16MHZ_4)
+        setPreambleCode(C.PREAMBLE_CODE_16MHZ_2)    # add by le
     else:
         setPreambleCode(C.PREAMBLE_CODE_64MHZ_10)
 
@@ -485,7 +488,6 @@ def generalConfiguration(address, mode):
     currentShortAddress[1] = randint(0, 256)
     deviceAddress = currentShortAddress[0] * 256 + currentShortAddress[1]
 
-    # writeBytes(C.PANADR, C.NO_SUB, [254, 254, 245, 225, 220], 4)
     # configure mode, network
     newConfiguration()
     setDefaultConfiguration()
@@ -1249,6 +1251,25 @@ def getData(datalength):
     readBytes(C.RX_BUFFER, C.NO_SUB, data, datalength)
     return data
 
+def getHexData(datalength):
+    """
+    This function reads a number of bytes in the RX buffer register, stores it into an array and return it.
+
+    Args:
+            datalength = The number of bytes you want to read from the rx buffer.
+
+    Returns:
+            The data read in the RX buffer as an hex array byte.
+    Add: by le
+    """
+    data = [0] * datalength
+    time.sleep(0.000005)
+    readBytes(C.RX_BUFFER, C.NO_SUB, data, datalength)
+    for i, val in enumerate(data):
+        data[i] = hex(val)
+    return data
+
+
 
 def setDataStr(data):
     """
@@ -1511,8 +1532,18 @@ Hardware functions
 """
 # le
 def setLeds(mode):
-    reg = [0]*4
+    reg = [None]*4
     if(mode & C.LEDS_ENABLE):
+        # Set up MFIO for LED output.
         readBytes(C.GPIO_CTRL, 0, reg, 4)
+
+
+        # Enable LP Oscillator to run from counter and turn on de-bounce clock
+
+
+        # Enable LEDs to blink and set default blink time.
+
+
+        # Clear force blink bits if needed.
         if(mode & C.LEDS_INIT_BLINK):
             return 0
