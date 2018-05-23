@@ -96,7 +96,7 @@ def handleInterrupt(channel):
     msgReceived = getBit(_sysstatus, 5, C.RXFCG_BIT)
     receiveTimeStampAvailable = getBit(_sysstatus, 5, C.LDEDONE_BIT)
     transmitDone = getBit(_sysstatus, 5, C.TXFRS_BIT)
-    print(msgReceived)
+    # print(transmitDone)
     if transmitDone:
         callbacks["handleSent"]()
         clearTransmitStatus()
@@ -1529,21 +1529,56 @@ def close():
 
 """
 Hardware functions
+
 """
 # le
+"""
+    This is used to set up Tx/Rx GPIOs which could be used to control LEDs
+    Input: 
+        mode - this is a bit field interpreted as follows:
+ *          - bit 0: 1 to enable LEDs, 0 to disable them
+ *          - bit 1: 1 to make LEDs blink once on init. Only valid if bit 0 is set (enable LEDs)
+ *          - bit 2 to 7: reserved
+    output parameters none
+ *
+    no return value
+"""
 def setLeds(mode):
     reg = [None]*4
     if(mode & C.LEDS_ENABLE):
         # Set up MFIO for LED output.
-        readBytes(C.GPIO_CTRL, 0, reg, 4)
-
-
+        readBytes(C.GPIO_CTRL, C.GPIO_MODE_OFFSET, reg, 4)
+        setBit(reg, 4, C.GPIO_MSGP2_MASKL, True)
+        setBit(reg, 4, C.GPIO_MSGP2_MASKH, False)
+        setBit(reg, 4, C.GPIO_MSGP3_MASKL, True)
+        setBit(reg, 4, C.GPIO_MSGP3_MASKH, False)
+        writeBytes(C.GPIO_CTRL, C.GPIO_MODE_OFFSET, reg, 4)
         # Enable LP Oscillator to run from counter and turn on de-bounce clock
-
-
+        readBytes(C.PMSC, C.PMSC_CTRL0_SUB, reg, 4)
+        setBit(reg, 4, C.PMSC_CTRL0_GPDCE, True)
+        setBit(reg, 4, C.PMSC_CTRL0_KHZCLEN, True)
+        writeBytes(C.PMSC, C.PMSC_CTRL0_SUB, reg, 4)
         # Enable LEDs to blink and set default blink time.
-
-
-        # Clear force blink bits if needed.
+        readBytes(C.PMSC, C.PMSC_LEDC_SUB, reg, 4)
+        setBit(reg, 4, C.PMSC_LEDC_BLNKEN, True)
+        setBit(reg, 4, C.PMSC_LEDC_BLINK_TIM0, False)
+        setBit(reg, 4, C.PMSC_LEDC_BLINK_TIM4, True)
+        setBit(reg, 4, C.PMSC_LEDC_BLINK_TIM5, False)
+        # Make LEDs blink once if requested.
         if(mode & C.LEDS_INIT_BLINK):
-            return 0
+            setBit(reg, 4, C.PMSC_LEDC_BLINK_NOW16, True)
+            setBit(reg, 4, C.PMSC_LEDC_BLINK_NOW17, True)
+            setBit(reg, 4, C.PMSC_LEDC_BLINK_NOW18, True)
+            setBit(reg, 4, C.PMSC_LEDC_BLINK_NOW19, True)
+        writeBytes(C.PMSC, C.PMSC_LEDC_SUB, reg, 4)
+        # Clear force blink bits if needed.
+        # if(mode & C.LEDS_INIT_BLINK):
+        #     return 0
+    else:
+        # Clear the GPIO bits that are used for LED control.
+        readBytes(C.GPIO_CTRL, C.GPIO_MODE_OFFSET, reg, 4)
+        setBit(reg, 4, C.GPIO_MSGP2_MASKL, False)
+        setBit(reg, 4, C.GPIO_MSGP2_MASKH, False)
+        setBit(reg, 4, C.GPIO_MSGP3_MASKL, False)
+        setBit(reg, 4, C.GPIO_MSGP3_MASKH, False)
+        writeBytes(C.GPIO_CTRL, C.GPIO_MODE_OFFSET, reg, 4)

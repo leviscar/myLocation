@@ -40,6 +40,7 @@ try:
     # DW1000.generalConfiguration("7D:00:22:EA:82:60:3B:9C", C.MODE_LONGDATA_RANGE_LOWPOWER)
     DW1000.generalConfiguration("7D:00:22:EA:82:60:3B:9C", MODE_TEST)
     DW1000.registerCallback("handleReceived", handleReceived)
+    DW1000.setLeds(C.LEDS_ENABLE)
     receiver()
     while 1:
         if received:
