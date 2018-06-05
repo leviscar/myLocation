@@ -15,6 +15,7 @@
 #include "main.h"
 #include <wiringPi.h>
 #include <stdint.h>
+#include "testFun.h"
 
 typedef unsigned long long uint64;
 /* Default antenna delay values for 64 MHz PRF. See NOTE 2 below. */
