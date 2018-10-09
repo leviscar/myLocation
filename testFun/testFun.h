@@ -19,6 +19,7 @@ void GET_Time2Tpoint(void);
 void ShowTimeStack(void);
 void getSYSstatus(void);
 void read_test(unsigned char add);
+void read_led(void);
 extern uint32 time_record;
 extern uint32 time_stack[];
 extern uint16 timestack_cnt;

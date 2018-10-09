@@ -63,7 +63,7 @@ int openspi(/*SPI_TypeDef* SPIx*/)
 
     bcm2835_gpio_fsel(RPI_V2_GPIO_P1_11, BCM2835_GPIO_FSEL_OUTP); // RSTn output
     bcm2835_gpio_clr(RPI_V2_GPIO_P1_11); // RSTn low 
-    deca_sleep(10); // delay 10ms
+    deca_sleep(10); // delay 10m
     //bcm2835_gpio_set(RPI_V2_GPIO_P1_11); // RSTn high
     bcm2835_gpio_set_pud(RPI_V2_GPIO_P1_11, BCM2835_GPIO_PUD_OFF);  // RSTn float
     bcm2835_gpio_fsel(RPI_V2_GPIO_P1_11, BCM2835_GPIO_FSEL_INPT); // RSTn input / open drain

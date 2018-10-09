@@ -26,6 +26,8 @@
 								<option id="gnu.c.compiler.option.debugging.level.1882826387" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.330521708" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/leviscar/sources/WiringPi/wiringPi"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/decaFun}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/usr}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/myPlatform}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/lib/gcc/arm-linux-gnueabihf/4.8.3/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/testFun}&quot;"/>

@@ -51,6 +51,15 @@ void read_test(unsigned char add)
 
 }
 
+
+// this func is wrote for show led register
+void read_led(void)
+{
+	uint32 reg;
+	reg = dwt_read32bitoffsetreg(GPIO_CTRL_ID, GPIO_MODE_OFFSET);
+	printf("%lx\r\n",reg);
+}
+
 //void Prt_anchnum(void)
 //{
 //	static int i=ANCHOR_NUM;

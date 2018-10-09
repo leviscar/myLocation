@@ -16,6 +16,9 @@
 #include <wiringPi.h>
 #include <stdint.h>
 #include "testFun.h"
+#include <bcm2835.h>
+#include "deca_callback.h"
+#include "irq_init.h"
 
 typedef unsigned long long uint64;
 /* Default antenna delay values for 64 MHz PRF. See NOTE 2 below. */
