@@ -77,6 +77,8 @@ typedef unsigned long long uint64;
 /* Length of the common part of the message (up to and including the function code, see NOTE 3 below). */
 #define ALL_MSG_COMMON_LEN 10
 
+#define ResetPin 29 // reset pin
+
 #define RX_BUF_LEN 127
 #define USAMRTCMD 63//==/?
 #define TXDELAYTIME_US (ANCHOR_NUM-1)*1500UL

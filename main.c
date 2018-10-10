@@ -116,6 +116,7 @@ int main(void)
 			deca_sleep(500);
 			i++;
 		}
+		exit(0);
 
 	}
 
@@ -140,7 +141,7 @@ int main(void)
 //			read_test(0);
 //			deca_sleep(500);
 //		}
-
+		bcm2835_close();
 		return 0;
 
 }
@@ -168,6 +169,9 @@ static void system_init(void)
 	else
 	{
 		sys_config.id=0;
+//		while(!isframe_sent) isframe_sent = 0;
+		tx_timestamp = get_tx_timestamp_u64();
+		printf("%d",tx_timestamp);
 		TBPOLL[FRAME_SN_IDX]=frame_seq_nb++;
 		TBPOLL[WLIDX]=0;
 		TBPOLL[WRIDX]=0;
@@ -221,8 +225,8 @@ static void dw1000_init(void)
 	dwt_setpanid(pan_id);
 	dwt_seteui(eui);
 	dwt_setaddress16(Achor_addr);
-	dwt_geteui(euiArr);
-	printf("eui0: %d\r\n",euiArr[1]);
+//	dwt_geteui(euiArr);
+//	printf("eui0: %d\r\n",euiArr[1]);
 /* Configure frame filtering. Only data frames are enabled in this example. Frame filtering must be enabled for Auto ACK to work. */
 	dwt_enableframefilter(DWT_FF_DATA_EN|DWT_FF_ACK_EN);
 
@@ -236,15 +240,16 @@ static void dw1000_init(void)
 
 void reset_DW1000(void)
 {
+	// enable GPIO used for dw1000 reset
+	bcm2835_gpio_fsel(ResetPin, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_write(ResetPin, LOW);//拉低
+	sleep_ms(1);
 
-//	//drive the RSTn pin low
-//
-//	sleep_ms(1);
-//
-//	//put the pin back to tri-state ... as input
-//
-//	sleep_ms(5);
-	dwt_softreset();
+	//put the pin back to tri-state ... as input
+	bcm2835_gpio_fsel(ResetPin, BCM2835_GPIO_FSEL_INPT);
+	bcm2835_gpio_set_pud(ResetPin, BCM2835_GPIO_PUD_UP);
+	sleep_ms(5);
+//	dwt_softreset();
 }
 
 static void printfSomething(void)

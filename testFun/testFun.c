@@ -66,24 +66,26 @@ void read_led(void)
 //	printf("anchor num=%d\r\n",i);
 //}
 //
-//void testfun1(void)
-//{
-//	uint8 txframe[19]={0x61,0x88,0x00,0xca,0xde,0x01,0x00,0x02,0x00,0xa1,0x02,0x00,0xac,0x2e,0x9d,0x7d,0x3d,0,0};
-//	dwt_forcetrxoff();
-//	dwt_writetxdata((19), txframe, 0); /* Zero offset in TX buffer. */
-//	dwt_writetxfctrl((19), 0, 1); /* Zero offset in TX buffer, ranging. */
-//	printf("testfun1 executed!\r\n");
-//	dwt_starttx(DWT_START_TX_IMMEDIATE|DWT_RESPONSE_EXPECTED);
-//}
-//void testfun2(void)
-//{
-//	uint8 txframe[19]={0x41,0x88,0x00,0xca,0xde,0xFF,0xFF,0x01,0x00,0xa0,0,0,0xac,0x2e,0x9d,0x7d,0x3d,0,0};
-//	dwt_forcetrxoff();
-//	dwt_writetxdata((12), txframe, 0); /* Zero offset in TX buffer. */
-//	dwt_writetxfctrl((12), 0, 1); /* Zero offset in TX buffer, ranging. */
-//	printf("testfun2 executed!\r\n");
-//	dwt_starttx(DWT_START_TX_IMMEDIATE|DWT_RESPONSE_EXPECTED);
-//}
+void testfun1(void)
+{
+	uint8 txframe[19]={0x61,0x88,0x00,0xca,0xde,0x01,0x00,0x02,0x00,0xa1,0x02,0x00,0xac,0x2e,0x9d,0x7d,0x3d,0,0};
+	dwt_forcetrxoff();
+	dwt_writetxdata((19), txframe, 0); /* Zero offset in TX buffer. */
+	dwt_writetxfctrl((19), 0, 1); /* Zero offset in TX buffer, ranging. */
+	printf("testfun1 executed!\r\n");
+	dwt_starttx(DWT_START_TX_IMMEDIATE|DWT_RESPONSE_EXPECTED);
+}
+
+
+void testfun2(void)
+{
+	uint8 txframe[19]={0x41,0x88,0x00,0xca,0xde,0xFF,0xFF,0x01,0x00,0xa0,0,0,0xac,0x2e,0x9d,0x7d,0x3d,0,0};
+	dwt_forcetrxoff();
+	dwt_writetxdata((12), txframe, 0); /* Zero offset in TX buffer. */
+	dwt_writetxfctrl((12), 0, 1); /* Zero offset in TX buffer, ranging. */
+	printf("testfun2 executed!\r\n");
+	dwt_starttx(DWT_START_TX_IMMEDIATE|DWT_RESPONSE_EXPECTED);
+}
 
 
 

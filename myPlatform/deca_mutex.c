@@ -13,6 +13,8 @@
 #include <stdio.h>
 
 #include "deca_device_api.h"
+
+
 //#include "port.h"
 // ---------------------------------------------------------------------------
 //
@@ -59,6 +61,8 @@ decaIrqStatus_t decamutexon(void)
 	}
 	return s ;   // return state before disable, value is used to re-enable in decamutexoff call
 */
+	decaIrqStatus_t s;
+//	s = SET;
     printf("mutex called\n");
     return 0;
 }

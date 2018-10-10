@@ -13,9 +13,6 @@ void dw1000IRQ_init(void)
 
 void port_set_deca_isr(port_deca_isr_t deca_isr)
 {
-
     /* If needed, deactivate DW1000 IRQ during the installation of the new handler. */
-
     port_deca_isr = deca_isr;
-
 }
